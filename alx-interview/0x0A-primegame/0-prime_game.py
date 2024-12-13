@@ -20,33 +20,32 @@ def isWinner(x, nums):
     """
     if x < 1 or not nums:
         return None
-    
-    marias_wins, bens_wins = 0, 0
 
-    # Generate primes using Sieve of Eratosthenes up to the maximum number in nums
-    n = max(nums)
-    primes = [True for _ in range(n + 1)]
-    primes[0] = primes[1] = False  # 0 and 1 are not prime numbers
-    for i in range(2, int(n**0.5) + 1):
+    # Step 1: Generate primes using Sieve of Eratosthenes
+    max_num = max(nums)
+    primes = [True] * (max_num + 1)
+    primes[0] = primes[1] = False  # 0 and 1 are not primes
+    for i in range(2, int(max_num ** 0.5) + 1):
         if primes[i]:
-            for j in range(i * i, n + 1, i):
+            for j in range(i * i, max_num + 1, i):
                 primes[j] = False
 
-    # Precompute the number of primes up to each index
-    prime_count = [0] * (n + 1)
-    for i in range(1, n + 1):
+    # Step 2: Precompute the number of primes up to each number
+    prime_count = [0] * (max_num + 1)
+    for i in range(1, max_num + 1):
         prime_count[i] = prime_count[i - 1] + (1 if primes[i] else 0)
 
-    # Simulate each game round
-    for _, n in zip(range(x), nums):
-        # Count the total primes up to n
-        primes_up_to_n = prime_count[n]
-        if primes_up_to_n % 2 == 0:
+    # Step 3: Simulate the game for each round
+    marias_wins = 0
+    bens_wins = 0
+
+    for n in nums:
+        if prime_count[n] % 2 == 0:
             bens_wins += 1
         else:
             marias_wins += 1
 
-    # Determine the overall winner
+    # Step 4: Determine the overall winner
     if marias_wins > bens_wins:
         return "Maria"
     elif bens_wins > marias_wins:
